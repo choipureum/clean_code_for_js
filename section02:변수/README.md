@@ -1,8 +1,10 @@
 # 변수 다루기
 [1.var를 지양해라](#1var%EB%A5%BC-%EC%A7%80%EC%96%91%ED%95%B4%EB%9D%BC)<br>
-[2.전역 공간 사용 최소화해라](#2-%EC%A0%84%EC%97%AD%EA%B3%B5%EA%B0%84-%EC%82%AC%EC%9A%A9%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94-%ED%95%98%EB%9D%BC)
-[3.임시변수 제거하기](#3-%EC%9E%84%EC%8B%9C%EB%B3%80%EC%88%98-%EC%A0%9C%EA%B1%B0%ED%95%98%EA%B8%B0)
+[2.전역 공간 사용 최소화해라](#2-%EC%A0%84%EC%97%AD%EA%B3%B5%EA%B0%84-%EC%82%AC%EC%9A%A9%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94-%ED%95%98%EB%9D%BC)<br>
+[3.임시변수 제거하기](#3-%EC%9E%84%EC%8B%9C%EB%B3%80%EC%88%98-%EC%A0%9C%EA%B1%B0%ED%95%98%EA%B8%B0)<br>
 [4.호이스팅 피하기](#4-%ED%98%B8%EC%9D%B4%EC%8A%A4%ED%8C%85-%EC%A3%BC%EC%9D%98%ED%95%98%EA%B8%B0)
+
+---
 
 ## 1.`**var**`를 지양해라
 
@@ -207,6 +209,7 @@ function getSomeValue(param){
 - -> 함수를 나누기, 바로 return, 고차함수(map, filter, reduce) 이용
 - -> 선언형으로 코딩하기
 
+---
 
 ## 4. **호이스팅** 주의하기
 

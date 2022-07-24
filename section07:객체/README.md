@@ -1,10 +1,13 @@
 # 객체 다루기
 
-[1. `Shorthand Properties`](#1.`Shorthand Properties`)<br>
-[2. `Computed Property Name`](#2.`Computed Property Name`)<br>
-[3. `Lookup Table`](#3.`Lookup Table`(순람표))<br>
-[4. `Object Destructuring`](#4.`Object Destructuring`)<br>
-[5. `Object Freeze`](#4.`Object Freeze`)<br>
+[1. `Shorthand Properties`](#1.`Shorthand-Properties`)<br>
+[2. `Computed Property Name`](#2.`Computed-Property-Name`)<br>
+[3. `Lookup Table`](#3.`Lookup-Table`(순람표))<br>
+[4. `Object Destructuring`](#4.`Object-Destructuring`)<br>
+[5. `Object Freeze`](#5.`Object-Freeze`)<br>
+[6. `Prototype 조작 지양하기`](#6.`Prototype-조작-지양하기`)<br>
+[7. `hasOwnProperty`](#7.`hasOwnProperty`)<br>
+[8. `직접 접근 지양하기`](#8.`직접-접근-지양하기`)<br>
 
 
 
@@ -272,6 +275,134 @@ function deepFreeze(targetObj){
     return Object.freeze(targetObj);
 }
 ```
+
+---
+
+## 6. `Prototype 조작 지양하기`
+
+1. 이미 js는 발전했다.(사용성x)
+ => 직접 만들어서 모듈화 하기, npm 배포하기
+2. js 빌트인 객체를 건들지마라. 상당히 위험할 수 있다. => 건드리지말고 새롭게 만들어라 차라리
+3. 몽키패치 언어이기때문에 프로토타입을 오버라이딩 시키는건 위험, 혼란 초래
+```js
+/**
+ * @name Prototype 지양하기
+ */
+function Car(nane,brand){
+    this.name = name;
+    this.brand = brand;
+}
+Car.prototype.sayName = function(){
+    return this.brand + '-' + this.name;
+}
+
+/**
+ * @name 프로토타입 제외
+ */
+class Car {
+    constructor(name,brand){
+        this.name = name;
+        this.brand = brand;
+    }
+    sayName(){
+        return this.brand + '-' + this.name;
+    }
+}
+```
+
+---
+
+## 7. `hasOwnProperty`
+
+```js
+const person = {
+    name: 'choipureum',
+}
+person.hasOwnProperty('age'); // false
+
+const foo = {
+    hasOwnProperty: function(){
+        return 'hasOwnProperty';
+    },
+    bar: 'string',
+}
+/**
+ * @name `hasOwnProperty`는 보호받지 못함. 덮어 씌울경우 다음과 같은 경우발생
+ * Obejct.prototype.hasOwnProperty.call을 써야 보호받을 수 있음
+ */
+foo.hasOwnProperty('bar'); //hasOwnProperty;
+Object.prototype.hasOwnProperty.call(foo, 'bar') // true
+```
+**NOTE** : 항상 위의 경우처럼 쓰기는 귀찮 => 스니펫을 만들어라
+
+```js
+function hasOwnProp(targetObj, tartetProp){
+    return Object.prototype.hasOwnProperty.call(
+        targetObj,targetProp,
+    )
+}
+```
+
+---
+
+## 8. `직접 접근 지양하기`
+
+```js
+/**
+ * @name 직접 접근지양 - 예측가능한 코드를 작성해서 동작이 예측 가능한 앱 : 디버깅을 빠르게 할 수 잇음.
+ * @type {{isLogin: boolean, isValidToken: boolean}}
+ */
+// 직접 접근 지양
+const model={
+    isLogin: false,
+    isValidToken: false,
+}
+
+/**
+ * @description 공통으로 변수 접근 관리, 공통 log를 찍거나 뭔가 안전하고 변화를 주기 쉽다
+ * @param bool
+ */
+// model에 대신 접근
+function setLogin(bool){
+    model.isLogin = bool;
+    serverAPI.log(model.isLogin);
+}
+// model에 대신 접근
+function setValidToken(bool){
+    model.isValidToken = bool;
+    setverAPI.log(model.isValidToken);
+}
+// model에 직접 접근할 수 없음
+function login(){
+    setLogin(true);
+    setValidToken(true);
+}
+// model에 직접 접근할 수 없음
+function logout(){
+    setLogin(false);
+    setValidToken(false);
+}
+
+someElement.addEventListener('click', login);
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

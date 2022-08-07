@@ -4,6 +4,11 @@
 [2. `argument & paramter`](#2.`argument & paramter`)<br>
 [3. `복잡한 인자 관리하기`](#3.`복잡한 인자 관리하기`)<br>
 [4. `Default Value`](#4.`Default Value`)<br>
+[5. `Rest Parameters`](#5. `Rest Parameters`)<br>
+[6. `void, return`](#6. `void, return`)<br>
+[7. `화살표 함수`](#7. `화살표 함수`)<br>
+[8. `Callback Function`](#8. `Callback Function`)<br>
+[9. `순수 함수`](#9. `순수 함수`)<br>
 
 ---
 
@@ -200,11 +205,86 @@ function createCarousle({
 }
 ```
 
+---
 
 
+## 5. `Rest Parameter`
 
+```js
+sumTotal(1,2,3,4,5);
+/**
+ * @name worst code
+ * @returns {any}
+ */
+function sumTotal(){
+    return Array.from(arguments).reduce(
+        (acc,curr) => acc + curr,
+    );
+}
 
+/**
+ * @name 개선 코드 - rest Parameter
+ * @param args
+ * @returns {any}
+ */
+function sumTotal(initValue, ...args){
+    console.log(initValue);
+    
+    return args.reduce(
+        (acc,curr) => acc + curr,
+    );
+}
+// 추가적인 인자도 받을수 있으며 Array로 변환하지 않아도 된다.
+```
 
+---
 
+## 6. `void & return`
+
+```js
+function handleClick(){
+    return setState(false); // return 
+}
+//개선
+function handleClick(){
+    setState(false);
+    return;
+}
+// worst
+function showAlert(message){
+    return alert(message);
+}
+
+function testVoid(){
+    return [1,2,3].push(4); // return 4
+}
+```
+**NOTE** :  return 하는 객체에만 return 해줄 것.
+
+---
+
+## 9. `화살표 함수`
+
+- 화살표 함수를 무조건 사용할 필요는 없다
+
+```js
+const user = {
+    name : 'poco',
+    getName: () => {
+        return this.name;
+    }
+}
+
+user.getName(); // undefined (렉시컬 스코프로 변경)
+
+const user = {
+    name : 'poco',
+    getName(){
+        return this.name;
+    }
+}
+
+user.getName() // poco
+```
 
 

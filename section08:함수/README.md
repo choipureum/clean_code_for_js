@@ -287,4 +287,62 @@ const user = {
 user.getName() // poco
 ```
 
+```js
+const user = {
+    name: 'Poco',
+    getName: () => {
+        return this.name;
+    },
+    newFriends: (...rest)=> {
+        //call, bind, apply 사용 불가
+        const newFriendList = rest;
+        return this.name + newFriendList;
+    }
+};
+```
+```js
+const Person = (name,city) => {
+    this.name = name;
+    this.city = city;
+}
+
+const person = new Person('poco', 'korea'); // ERROR! 
+// 화살표 함수는 생성자 함수 생성 불가
+```
+```js
+class Parent{
+    parentMethod(){
+        console.log('parentMethod')
+    }
+    parentMethodArrow = () => {
+        console.log('parentMethodArrow')
+    }
+    overrideMethod = () => {
+        return  'Parent';
+    }
+}
+class Child extends Parent{
+    childMethod(){
+        super.parentMethod(); // parentMethod
+    }
+    choidMethodArrow(){
+        super.parentMethodArrow(); // ERROR! 
+        // 화살표함수로 만든 class 내부 메소드는 상속이 안됨 초기화됨
+    }
+    overrideMethod(){
+        return 'Child';
+    }
+}
+new Child().childMethod();
+new Child().overrideMethod(); // Child가 호출될지 알았지만 Parent가 호출됨 => 화살표함수를 일반함수로 바꾸면 정상적으로 Child가 나옴.
+```
+
+**NOTE** : 무분별한 화살표함수는 옳지 않다. 문법적으로 안되거나 예측 불가능한 엣지케이스가 나올 수 있다. 적극적으로 사용하되 분별해서 사용하자.
+
+
+
+
+
+
+
 

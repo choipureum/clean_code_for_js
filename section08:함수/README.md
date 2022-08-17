@@ -9,6 +9,8 @@
 [7. `화살표 함수`](#7. `화살표 함수`)<br>
 [8. `Callback Function`](#8. `Callback Function`)<br>
 [9. `순수 함수`](#9. `순수 함수`)<br>
+[10. `Closure`](#9. `Closure`)<br>
+
 
 ---
 
@@ -263,7 +265,7 @@ function testVoid(){
 
 ---
 
-## 9. `화살표 함수`
+## 7. `화살표 함수`
 
 - 화살표 함수를 무조건 사용할 필요는 없다
 
@@ -340,9 +342,230 @@ new Child().overrideMethod(); // Child가 호출될지 알았지만 Parent가 �
 **NOTE** : 무분별한 화살표함수는 옳지 않다. 문법적으로 안되거나 예측 불가능한 엣지케이스가 나올 수 있다. 적극적으로 사용하되 분별해서 사용하자.
 
 
+---
+
+## 8. `Callback Function`
+
+```js
+/**
+ * @name 대표적 콜백 함수
+ */
+element.addEventListener('click', (e)=> {
+    //여러 event
+});
+// addEventListener의 프로토타입 정의
+Dom.prototype.addEventListener = (eventType, callbackFunc) => {
+    if(eventType == 'click'){
+        const clickEventObject = {
+            target: {},
+        }
+    }
+    callbackFunc(clickEventObject);
+}
+
+/**
+ * @name 예제 2
+ */
+function register(){
+    const isConfirm = confirm('회원가입에 성공했습니다.');
+    
+    if(isConfirm){
+        redirectUserInfoPage();
+    }
+}
+
+function login(){
+    const isConfirm = confirm('로그인에 성공했습니다');
+    
+    if(isConfirm){
+        redirectIndexPage();
+    }
+}
+
+/**
+ * @name 공통화
+ * @param msg
+ * @param callbackFunc
+ */
+function confirmModal(msg, callbackFunc){
+    const isConfirm = confirm(msg);
+    
+    if(isConfirm && callbackFunc){
+        callbackFunc();
+    }
+}
+```
+
+---
+
+## 9. `순수 함수`
+**NOTE** : 순수함수는 예측 가능하며 사이드이펙트를 일으키지 않는 함수.
+
+```js
+let num1 = 10;
+let num2 = 20;
+
+/**
+ * @name 비순수함수
+ * @returns {number}
+ */
+function impureSum1(){
+    return num1 + num2;
+}
+
+function impureSum2(newNum){
+    return num1 + newNum;
+}
+
+impureSum1(); //  30
+
+num1 = 30;
+impureSum1(); //  50 -> 외부인자에 따라 변해버림
+impureSum2(30); // 60 -> 사이드이펙트 발생
+```
+```js
+/**
+ * @name 순수함수
+ * @param num1
+ * @param num2
+ * @returns {*}
+ */
+function pureSum(num1, num2){
+    return num1 + num2; // 외부인자에 따라 변하지 않는 순수함수
+}
+```
+
+**NOTE** : 순수함수 심화
+```js
+/**
+ * @name 순수함수
+ * @param num
+ * @returns {*}
+ */
+function changeValue(num){
+    num++;
+    return num;
+}
+changeValue(1); //2
+changeValue(3); //4
+changeValue(4); //5
+//////////////////////////
+
+// 원시타입 vs 참조 타입 차이
+// => 객체, 배열 등은 새롭게 만들어 반환해야된다.
+const obj = { one: 1}
+function changeObj(targetObj){
+    targetObj.one = 100;
+    return targetObj;
+}
+
+changeObj(obj); //{one: 100}
+obj; // { one: 100 }
+
+function chageObjNew(targetObj){
+    return { ...targetObj, one: 100 };
+}
+changeObjNew(obj); // { one: 100 };
+obj; // { one:1 }
+```
+---
+
+## 10. `Closure`
+
+```js
+
+function add(num1){
+    return function sum(num2){
+        return num1 + num2;
+    }
+}
+
+const addOne = add(1);
+const addTwo = add(2);
+
+addOne(3); // 4
+addTwo(2); // 4
+
+const addThree = add(1)(3) // 4
+```
+
+**NOTE** : 응용1
+```js
+function add(num1){
+    return function(num2){
+        return function(calculateFn){
+            return calculateFn(num1,num2);
+        }
+    }
+}
+
+function sum(num1,num2){
+    return num1 + num2;
+}
+function multiple(num1, num2){
+    return num1 * num2;
+}
+
+const addOne = add(5)(2);
+const sumAdd = addOne(sum); // 7
+const sumMultiple = addOne(multiple); //10
+```
+**NOTE** : 응용2
+
+```js
+function log(value){
+    return function(fn){
+        fn(value);
+    }
+}
+
+const logFoo = log('foo');
+
+logFoo((v)=> console.log(v));
+logFoo((v)=> console.info(v));
+logFoo((v)=> console.error(v));
+logFoo((v)=> console.warn(v));
 
 
+///////
 
+const arr = [1,2,3, 'A', 'B', 'C'];
+
+function isTypeOf(type){
+    return function(value){
+        return typeof value === type;
+    }
+}
+
+const isNumber = isTypeOf('number');
+const isString = isTypeOf('string');
+
+
+arr.filter(isNumber); //[1,2,3]
+arr.filter(isString); //[A,B,C]
+```
+
+```js
+function fetcher(endpoint){
+    return function(url,options){
+        return fetch(endpoint+url, options)
+            .then((res) => {
+                if(res.ok){
+                    return res.json();
+                }else{
+                    throw new Error(res.error);
+                }
+            })
+            .catch((err) => console.error(err));
+    };
+}
+
+const naverApi = fetcher('http://naver.com');
+const daumApi = fetcher('http://daum.net');
+
+daumApi('/webtoon').then((res)=> res);
+naverApi('/webtoon').then((res)=> res);
+```
 
 
 
